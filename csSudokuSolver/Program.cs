@@ -49,7 +49,31 @@ namespace csSudokuSolver
             new int[] {0, 6, 0, 0, 0, 0, 2, 8, 0},
             new int[] {0, 0, 0, 4, 1, 9, 0, 0, 5},
             new int[] {0, 0, 0, 0, 8, 0, 0, 7, 9} };
-            var result=csSudokuSolver(puzzle);
+            //the missing number is 6
+            var puzzle2 = new int[][]{
+            new int[] {4, 3, 5, 2, 0, 9, 7, 8, 1},
+            new int[] {6, 8, 2, 5, 7, 1, 4, 9, 3},
+            new int[] {1, 9, 7, 8, 3, 4, 5, 6, 2},
+            new int[] {8, 2, 6, 1, 9, 5, 3, 4, 7},
+            new int[] {3, 7, 4, 6, 8, 2, 9, 1, 5},
+            new int[] {9, 5, 1, 7, 4, 3, 6, 2, 8},
+            new int[] {5, 1, 9, 3, 2, 6, 8, 7, 4},
+            new int[] {2, 4, 8, 9, 5, 7, 1, 3, 6},
+            new int[] {7, 6, 3, 4, 1, 8, 2, 5, 9} };
+            //the above got solved by figure it out
+
+
+            var puzzle3 = new int[][]{
+            new int[] {4, 0, 3, 0, 0, 0, 0, 0, 0},
+            new int[] {6, 8, 0, 0, 0, 0, 5, 0, 0},
+            new int[] {7, 5, 0, 0, 0, 3, 0, 9, 0},
+            new int[] {5, 0, 0, 0, 8, 0, 1, 3, 0},
+            new int[] {0, 0, 0, 0, 9, 0, 7, 0, 2},
+            new int[] {0, 1, 7, 0, 0, 5, 0, 0, 6},
+            new int[] {0, 6, 0, 1, 3, 8, 9, 4, 0},
+            new int[] {0, 0, 9, 0, 5, 2, 0, 6, 0},
+            new int[] {0, 3, 0, 9, 0, 7, 8, 2, 5} };
+            var result =csSudokuSolver(puzzle3);
             
         }
 
@@ -57,6 +81,13 @@ namespace csSudokuSolver
         {
             if (board.Length != 9 || board[0].Length!=9) return Array.Empty<int[]>();
             bool isSolved = false;
+            var possible = new List<int>[9,9];
+            var list = new int[]{ 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+            for (int i = 0; i < 9; i++)
+            {
+                for (int j = 0; j < 9; j++)
+                    possible[i,j] = list.ToList();
+            }
             while (!isSolved)
             {
                 isSolved = true;
@@ -67,36 +98,57 @@ namespace csSudokuSolver
                         if (board[row][col] == 0)
                         {
                             isSolved = false;
-                            figureOut(board, row, col);
-                            printBoard(board);
+                            FigureOut(board, possible,row, col);
+                            
+                            PrintBoard(board);
                         }
                     }
                 }
             }
             return board;
         }
-        public static void figureOut(int[][] board, int row, int col)
+        public static void FigureOut(int[][] board, List<int>[,] possible,int row, int col)
         {
-            var fullRow = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+            List<int> myPoss = possible[row,col];
 
-            var notUsed = fullRow.Where(x => !board[row].Contains(x)).ToList();
+            myPoss = myPoss.Where(x => !board[row].Contains(x)).ToList();
 
-            for (int index=0;index<notUsed.Count;index++)
+            for (int index=0;index<myPoss.Count;index++)
             {
-                for (int checkRow = 0; checkRow < 9; checkRow++)
+                for (int checkCol = 0; checkCol < 9; checkCol++)
                 {
-                    if (index >= notUsed.Count) break;
-                    var temp = board[checkRow][col];
-                    if (board[checkRow][col] == notUsed.ElementAt(index)) notUsed.RemoveAt(index);
+                    if (index >= myPoss.Count) break;
+                    var temp = board[row][checkCol];
+                    if (board[row][checkCol] == myPoss.ElementAt(index)) myPoss.RemoveAt(index);
                 }
             }
-            if (notUsed.Count == 1)
+            if (myPoss.Count == 1)
             {
-                board[row][col] = notUsed.ElementAt(0);
-                Console.WriteLine($"At {row}, {col}: {notUsed.ElementAt(0)}");
+                board[row][col] = myPoss.ElementAt(0);
+                Console.WriteLine($"At {row}, {col}: {myPoss.ElementAt(0)}");
             }    
         }
-        public static void printBoard(int[][] board)
+        public static void FigureItOut2(int[][] board, List<int>[,] possible,int row, int col)
+        {
+            var myPoss=possible[row,col];
+            int startRow = row / 3 * 3;
+            int endRow = startRow+2;
+            int startCol = col / 3 * 3;
+            int endCol = startCol + 2;
+            for(int i = startRow; i <= endRow; i++)
+            {
+                for(int j=startCol; j <= endCol; j++)
+                {
+                    if (board[i][j] != 0) myPoss.Remove(board[i][j]);
+                }
+            }
+            if (myPoss.Count == 1)
+            {
+                board[row][col] = myPoss.ElementAt(0);
+                Console.WriteLine($"At {row}, {col}: {myPoss.ElementAt(0)}");
+            }
+        }
+        public static void PrintBoard(int[][] board)
         {
             foreach (var collection in board)
             {
