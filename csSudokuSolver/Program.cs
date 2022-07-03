@@ -61,6 +61,16 @@ namespace csSudokuSolver
             new int[] {2, 4, 8, 9, 5, 7, 1, 3, 6},
             new int[] {7, 6, 3, 4, 1, 8, 2, 5, 9} };
             //the above got solved by figure it out
+            var puzzle2a = new int[][]{
+            new int[] {0, 3, 5, 2, 0, 9, 7, 8, 1},
+            new int[] {6, 8, 2, 5, 7, 1, 4, 9, 3},
+            new int[] {1, 9, 7, 8, 3, 4, 5, 6, 2},
+            new int[] {8, 2, 6, 1, 9, 5, 3, 4, 7},
+            new int[] {3, 7, 4, 6, 8, 2, 9, 1, 5},
+            new int[] {9, 5, 1, 7, 4, 3, 6, 2, 8},
+            new int[] {5, 1, 9, 3, 2, 6, 8, 7, 4},
+            new int[] {2, 4, 8, 9, 5, 7, 1, 3, 6},
+            new int[] {7, 6, 3, 4, 1, 8, 2, 5, 9} };
 
 
             var puzzle3 = new int[][]{
@@ -73,14 +83,15 @@ namespace csSudokuSolver
             new int[] {0, 6, 0, 1, 3, 8, 9, 4, 0},
             new int[] {0, 0, 9, 0, 5, 2, 0, 6, 0},
             new int[] {0, 3, 0, 9, 0, 7, 8, 2, 5} };
-            var result =csSudokuSolver(puzzle3);
+            var result =csSudokuSolver(puzzle2a);
             
         }
 
-        public static int [][] csSudokuSolver(int[][] board)
+        public static bool csSudokuSolver(int[][] board)
         {
-            if (board.Length != 9 || board[0].Length!=9) return Array.Empty<int[]>();
+            if (board.Length != 9 || board[0].Length != 9) return Array.Empty<int[]>();
             bool isSolved = false;
+            /*
             var possible = new List<int>[9,9];
             var list = new int[]{ 1, 2, 3, 4, 5, 6, 7, 8, 9 };
             for (int i = 0; i < 9; i++)
@@ -88,26 +99,69 @@ namespace csSudokuSolver
                 for (int j = 0; j < 9; j++)
                     possible[i,j] = list.ToList();
             }
-            while (!isSolved)
+            */
+            //while (!isSolved)//&&!isUnsolvable)
+            //{
+            //isSolved = true;
+            //isUnsolvable = true;
+            for (int row = 0; row < 9; row++)
             {
-                isSolved = true;
-                for(int row = 0; row < 9; row++)
+                for (int col = 0; col < 9; col++)
                 {
-                    for (int col = 0; col < 9; col++)
+                    if (board[row][col] == 0)
                     {
-                        if (board[row][col] == 0)
+                        for (int i = 1; i <= 9; i++)
                         {
-                            isSolved = false;
-                            FigureOut(board, possible,row, col);
-                            
-                            PrintBoard(board);
+                            board[row][col] = i;
+                            if (Works(board, row,col) && csSudokuSolver(board))
+                            {
+                                return true;
+                            }
+                            else
+                            {
+                                board[row][col] = 0;
+                            }
+
                         }
+                        //isSolved = false;
+                        //if(isUnsolvable) isUnsolvable=!FigureOut(board, possible,row, col);
                     }
+                    //PrintBoard(board);
                 }
             }
-            return board;
+            
+            
+            return false;
         }
-        public static void FigureOut(int[][] board, List<int>[,] possible,int row, int col)
+        public static bool Works(int[][] board, int r, int c)
+        {
+            //check the row
+            for (int row = 0; row < 9; row++)
+            {
+                if (row != r && board[row][c] == board[r][c]) return false;
+            }
+            //check the col
+            for(int col = 0; col < 9; col++)
+            {
+                if (col != c && board[r][col] == board[r][c]) return false;
+            }
+            //check the 9 squares in the box
+            int startRow = r / 3 * 3;
+            int endRow = startRow + 2;
+            int startCol = c / 3 * 3;
+            int endCol = startCol + 2;
+            for(int row = startRow; row <= endRow; row++)
+            {
+                for (int col = startCol; col <= endCol; col++)
+                {
+                    if(board[row][col] == board[r][c]&&row!=r&&col!=c) return false;
+                }
+            }
+            return true;
+        }
+
+
+        /*public static bool FigureOut(int[][] board, List<int>[,] possible,int row, int col)
         {
             List<int> myPoss = possible[row,col];
 
@@ -126,7 +180,12 @@ namespace csSudokuSolver
             {
                 board[row][col] = myPoss.ElementAt(0);
                 Console.WriteLine($"At {row}, {col}: {myPoss.ElementAt(0)}");
+                return true;
             }    
+            else
+            {
+                return false;
+            }
         }
         public static void FigureItOut2(int[][] board, List<int>[,] possible,int row, int col)
         {
@@ -148,6 +207,7 @@ namespace csSudokuSolver
                 Console.WriteLine($"At {row}, {col}: {myPoss.ElementAt(0)}");
             }
         }
+        */
         public static void PrintBoard(int[][] board)
         {
             foreach (var collection in board)
