@@ -89,8 +89,8 @@ namespace csSudokuSolver
 
         public static bool csSudokuSolver(int[][] board)
         {
-            if (board.Length != 9 || board[0].Length != 9) return Array.Empty<int[]>();
-            bool isSolved = false;
+            if (board.Length != 9 || board[0].Length != 9) return false;//Array.Empty<int[]>();
+            //bool isSolved = false;
             /*
             var possible = new List<int>[9,9];
             var list = new int[]{ 1, 2, 3, 4, 5, 6, 7, 8, 9 };
