@@ -83,14 +83,15 @@ namespace csSudokuSolver
             new int[] {0, 6, 0, 1, 3, 8, 9, 4, 0},
             new int[] {0, 0, 9, 0, 5, 2, 0, 6, 0},
             new int[] {0, 3, 0, 9, 0, 7, 8, 2, 5} };
-            var result =csSudokuSolver(puzzle2a);
+            var result =csSudokuSolver(puzzle,0);
+            PrintBoard(puzzle2a);
             
         }
 
-        public static bool csSudokuSolver(int[][] board)
+        public static bool csSudokuSolver(int[][] board, int level)
         {
             if (board.Length != 9 || board[0].Length != 9) return false;//Array.Empty<int[]>();
-            //bool isSolved = false;
+            bool isSolved = false;
             /*
             var possible = new List<int>[9,9];
             var list = new int[]{ 1, 2, 3, 4, 5, 6, 7, 8, 9 };
@@ -102,24 +103,33 @@ namespace csSudokuSolver
             */
             //while (!isSolved)//&&!isUnsolvable)
             //{
-            //isSolved = true;
-            //isUnsolvable = true;
+                isSolved = true;
+                //isUnsolvable = true;
             for (int row = 0; row < 9; row++)
             {
                 for (int col = 0; col < 9; col++)
                 {
+                    int myNum = board[row][col];
+                    
                     if (board[row][col] == 0)
                     {
+                        Console.WriteLine(level + ":" + row + " " + col + ":" + myNum);
                         for (int i = 1; i <= 9; i++)
                         {
+                            isSolved = true;
                             board[row][col] = i;
-                            if (Works(board, row,col) && csSudokuSolver(board))
+                            if (col == 4&&i==6)
+                                i = i;
+                            bool istrue = Works(board, row, col);
+                            istrue = csSudokuSolver(board,level+1);
+                            if (Works(board, row, col) && csSudokuSolver(board,level+1))
                             {
                                 return true;
                             }
                             else
                             {
                                 board[row][col] = 0;
+                                isSolved = false;
                             }
 
                         }
@@ -128,22 +138,26 @@ namespace csSudokuSolver
                     }
                     //PrintBoard(board);
                 }
+
             }
-            
-            
-            return false;
+            for(int row = 0; row < 9; row++)
+                if (board[row].Contains(0))
+                    return false;
+            return true;
         }
         public static bool Works(int[][] board, int r, int c)
         {
             //check the row
             for (int row = 0; row < 9; row++)
             {
-                if (row != r && board[row][c] == board[r][c]) return false;
+                if (row != r && board[row][c] == board[r][c]) 
+                    return false;
             }
             //check the col
             for(int col = 0; col < 9; col++)
             {
-                if (col != c && board[r][col] == board[r][c]) return false;
+                if (col != c && board[r][col] == board[r][c]) 
+                    return false;
             }
             //check the 9 squares in the box
             int startRow = r / 3 * 3;
@@ -154,7 +168,8 @@ namespace csSudokuSolver
             {
                 for (int col = startCol; col <= endCol; col++)
                 {
-                    if(board[row][col] == board[r][c]&&row!=r&&col!=c) return false;
+                    if(board[row][col] == board[r][c]&&row!=r&&col!=c) 
+                        return false;
                 }
             }
             return true;
