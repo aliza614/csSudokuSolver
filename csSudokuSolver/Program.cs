@@ -113,15 +113,15 @@ namespace csSudokuSolver
                     
                     if (board[row][col] == 0)
                     {
-                        Console.WriteLine(level + ":" + row + " " + col + ":" + myNum);
+                        //Console.WriteLine(level + ":" + row + " " + col + ":" + myNum);
                         for (int i = 1; i <= 9; i++)
                         {
                             isSolved = true;
                             board[row][col] = i;
-                            if (col == 4&&i==6)
-                                i = i;
-                            bool istrue = Works(board, row, col);
-                            istrue = csSudokuSolver(board,level+1);
+                            //if (col == 4&&i==6)
+                            //    i = i;
+                            //bool istrue = Works(board, row, col);
+                            //istrue = csSudokuSolver(board,level+1);
                             if (Works(board, row, col) && csSudokuSolver(board,level+1))
                             {
                                 return true;
@@ -131,7 +131,6 @@ namespace csSudokuSolver
                                 board[row][col] = 0;
                                 isSolved = false;
                             }
-
                         }
                         //isSolved = false;
                         //if(isUnsolvable) isUnsolvable=!FigureOut(board, possible,row, col);
