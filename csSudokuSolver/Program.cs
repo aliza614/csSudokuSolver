@@ -110,6 +110,7 @@ namespace csSudokuSolver
                 for (int col = 0; col < 9; col++)
                 {
                     int myNum = board[row][col];
+                    if (row == 8 && col == 8&myNum!=0) return true;
                     
                     if (board[row][col] == 0)
                     {
@@ -232,6 +233,81 @@ namespace csSudokuSolver
                 }
                 Console.WriteLine();
             }
+        }
+        public static bool sudokuSolver2(int[][] puzzle)
+        {
+            List<int>[,] possible=new List<int>[9,9] ;
+            //initialize possible
+            for (int row=0;row<puzzle.Length; row++)
+            {
+                for(int col=0;col<puzzle[row].Length; col++)
+                {
+                    possible[row,col] = new List<int>();
+                    if(puzzle[row][col] != 0) possible[row,col].Add(puzzle[row][col]);
+                    else
+                    {
+                        for (int i=1;i<=puzzle.Length;i++)
+                            possible[row,col].Add(i);
+                        possible[row,col] = checkPoss(puzzle,row,col,possible[row,col]);
+                    }
+                }
+            }
+            //call method to solve
+            sudokuSolver2(puzzle, 0, 0, possible);
+            
+
+        }
+        public static bool csSudokuSolver2(int[][] puzzle, int row, int col, List<int>[,] possible)
+        {
+            while(puzzle[row][col] != 0)
+            {
+                if (col==puzzle[row].Length-1)
+                {
+
+                }
+            }
+        }
+        public static List<int> checkPoss(int[][] puzzle, int row, int col, List<int> possToCheck)
+        {
+            if (puzzle[row][col] != 0) throw new Exception("cannot replace this number");
+            if (possToCheck.Count() == 0) throw new Exception("there are no options");
+
+            foreach (int i in possToCheck)
+            {
+                for (int r = 0; r < puzzle.Length; r++)
+                {
+                    if (puzzle[r][col] == i && r != row)
+                    {
+                        possToCheck.Remove(i);
+                        goto nexti;
+                    }
+                }
+                for(int c = 0; c < puzzle.Length; c++)
+                {
+                    if (puzzle[row][c] == i && c != col)
+                    {
+                        possToCheck.Remove(i);
+                        goto nexti;
+                    }
+                }
+                int startRow = row / 3 * 3;
+                int startCol = col / 3 * 3;
+                int endRow = startRow+2;
+                int endCol = startCol+2;
+                for(int r = startRow;r<=endRow;r++)
+                {
+                    for (int c= startCol; c <= endCol; c++)
+                    {
+                        if (puzzle[r][c]==i&& c != col && r != row)
+                        {
+                            possToCheck.Remove(i);
+                            goto nexti;
+                        }
+                    }
+                }
+            nexti:;
+            }
+            return possToCheck;
         }
     }
 }
