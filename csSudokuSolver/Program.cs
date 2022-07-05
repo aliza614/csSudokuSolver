@@ -83,28 +83,28 @@ namespace csSudokuSolver
             new int[] {0, 6, 0, 1, 3, 8, 9, 4, 0},
             new int[] {0, 0, 9, 0, 5, 2, 0, 6, 0},
             new int[] {0, 3, 0, 9, 0, 7, 8, 2, 5} };
-            var result =csSudokuSolver(puzzle,0);
-            PrintBoard(puzzle2a);
+            var puzzle4 = new int[][]
+                {   new int[]{2,0,0,0,1,0,0,7,8 },
+                    new int[]{0,0,8,0,0,0,4,0,9 },
+                    new int[]{4,3,0,9,2,0,0,6,1 },
+                    new int[]{1,0,0,6,0,0,9,8,4 },
+                    new int[]{9,0,0,0,3,0,2,0,7 },
+                    new int[]{0,0,2,0,0,9,6,1,0 },
+                    new int[]{0,7,0,0,8,0,0,0,6 },
+                    new int[]{8,0,0,3,0,0,7,0,5 },
+                    new int[]{6,4,9,0,5,0,0,0,2 }
+            };
+            PrintBoard(puzzle4);
+            Console.WriteLine("Now Solve it:");
+            csSudokuSolver3(puzzle4);
+            PrintBoard(puzzle4);
             
         }
 
         public static bool csSudokuSolver(int[][] board, int level)
         {
             if (board.Length != 9 || board[0].Length != 9) return false;//Array.Empty<int[]>();
-            bool isSolved = false;
-            /*
-            var possible = new List<int>[9,9];
-            var list = new int[]{ 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-            for (int i = 0; i < 9; i++)
-            {
-                for (int j = 0; j < 9; j++)
-                    possible[i,j] = list.ToList();
-            }
-            */
-            //while (!isSolved)//&&!isUnsolvable)
-            //{
-                isSolved = true;
-                //isUnsolvable = true;
+            
             for (int row = 0; row < 9; row++)
             {
                 for (int col = 0; col < 9; col++)
@@ -117,21 +117,17 @@ namespace csSudokuSolver
                         //Console.WriteLine(level + ":" + row + " " + col + ":" + myNum);
                         for (int i = 1; i <= 9; i++)
                         {
-                            isSolved = true;
+              //              isSolved = true;
                             board[row][col] = i;
                             //if (col == 4&&i==6)
                             //    i = i;
                             //bool istrue = Works(board, row, col);
                             //istrue = csSudokuSolver(board,level+1);
                             if (Works(board, row, col) && csSudokuSolver(board,level+1))
-                            {
                                 return true;
-                            }
                             else
-                            {
                                 board[row][col] = 0;
-                                isSolved = false;
-                            }
+                //                isSolved = false;
                         }
                         //isSolved = false;
                         //if(isUnsolvable) isUnsolvable=!FigureOut(board, possible,row, col);
@@ -234,7 +230,7 @@ namespace csSudokuSolver
                 Console.WriteLine();
             }
         }
-        public static bool sudokuSolver2(int[][] puzzle)
+        public static void csSudokuSolver2(int[][] puzzle)
         {
             List<int>[,] possible=new List<int>[9,9] ;
             //initialize possible
@@ -253,19 +249,55 @@ namespace csSudokuSolver
                 }
             }
             //call method to solve
-            sudokuSolver2(puzzle, 0, 0, possible);
+            csSudokuSolver2(puzzle, 0, 0, possible);
             
 
         }
         public static bool csSudokuSolver2(int[][] puzzle, int row, int col, List<int>[,] possible)
         {
-            while(puzzle[row][col] != 0)
+
+            //check that the inputs are valid
+            for (int r = 0; r < puzzle.Length; r++)
             {
-                if (col==puzzle[row].Length-1)
+                for(int c = 0; c < puzzle[r].Length; c++)
                 {
 
+                    if (puzzle[r][c] == 0 && possible[r,c].Count < 1)
+                        return false;
                 }
             }
+            if (row == puzzle.Length) return true;
+            
+            //find the next blank spot
+            while(puzzle[row][col] != 0 || possible[row,col].Count==1)
+            {
+                if (row == puzzle.Length) return true;//the puzzle is solved
+                if (col == puzzle[row].Length - 1 || col == puzzle[row].Length)
+                {
+                    col = 0;
+                    row++;
+                }
+                else
+                {
+                    col++;
+                }
+                
+            }
+
+            //go through each option
+            int[] temp = { };
+            possible[row, col].CopyTo(temp, 0);
+            foreach(int i in temp)
+            {
+                possible[row, col]=new List<int> {i};
+                for(int r = 0; i < puzzle.Length; r++)
+                {
+                    
+                }
+                if(csSudokuSolver2(puzzle, row, col+1, possible)) return true;
+            }
+            return false;
+
         }
         public static List<int> checkPoss(int[][] puzzle, int row, int col, List<int> possToCheck)
         {
@@ -308,6 +340,104 @@ namespace csSudokuSolver
             nexti:;
             }
             return possToCheck;
+        }
+        public static bool csSudokuSolver3(int[][] board)
+        {
+            while (HasEmptyPlaces(board))
+            {
+                for (int row = 0; row < 9; row++)
+                {
+                    for (int col = 0; col < 9; col++)
+                    {
+
+                        if (board[row][col] == 0)
+                        {
+                            List<int> possible = new List<int>();
+                            for (int option = 1; option <= 9; option++)
+                            {
+                                if (Works3(board, option, row, col))
+                                {
+                                    board[row][col] = option;
+                                    if (csSudokuSolver3(board))
+                                    {
+                                        possible.Add(option);
+                                    }
+                                    board[row][col] = 0;
+
+                                }
+                            }
+                            if (possible.Count == 0) return false;
+                            if (possible.Count == 1)
+                            {
+                                board[row][col] = possible[0];
+                                return true;
+                            }
+                            if (possible.Count > 1)
+                            {
+                                board[row][col] = 0;
+                                return true;
+                            }
+                        }
+                    }
+
+                }
+            }
+            return true;
+        }
+        public static bool HasEmptyPlaces(int[][] puzzle)
+        {
+            for(int r=0; r<puzzle.Length; r++)
+            {
+                for (int c=0; c<puzzle[r].Length; c++)
+                {
+                    if (puzzle[r][c] == 0) return true;
+                }
+            }
+            return false;
+        }
+        public static bool Works3(int[][] puzzle, int option, int row, int col)
+        {
+            if (IsInCol3(puzzle, col, option)) return false;
+            if(IsInRow3(puzzle, row, option)) return false;
+            if (IsInBox3(puzzle, row, col, option)) return false;
+            
+            return true;
+
+        }
+        public static bool IsInCol3(int[][]puzzle,int col, int option)
+        {
+
+            for (int r = 0; r < puzzle.Length; r++)
+            {
+                if (puzzle[r][col] == option)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        public static bool IsInRow3(int[][] puzzle, int row, int option)
+        {
+            for (int c = 0; c < puzzle.Length; c++)
+            {
+                if (puzzle[row][c] == option)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        public static bool IsInBox3(int[][] puzzle, int row, int col, int option)
+        {
+            int startRow = row / 3 * 3;
+            int startCol = col / 3 * 3;
+            int endRow = startRow + 2;
+            int endCol = startCol + 2;
+            for (int r = startRow; r <= endRow; r++)
+                for (int c = startCol; c <= endCol; c++)
+                    if (puzzle[r][c] == option && c != col && r != row)
+                        return true;
+            return false;
         }
     }
 }
