@@ -134,8 +134,10 @@ namespace csSudokuSolver
        
         public static bool csSudokuSolver3(int[][] board)
         {
-            while (HasEmptyPlaces(board))
+            bool isSolveable = true;
+            while (HasEmptyPlaces(board)&&isSolveable)
             {
+                isSolveable = false;
                 for (int row = 0; row < 9; row++)
                 {
                     for (int col = 0; col < 9; col++)
@@ -160,6 +162,7 @@ namespace csSudokuSolver
                             if (possible.Count == 0) return false;
                             if (possible.Count == 1)
                             {
+                                isSolveable = true;
                                 board[row][col] = possible[0];
                                 return true;
                             }
