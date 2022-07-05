@@ -94,15 +94,16 @@ namespace csSudokuSolver
                     new int[]{8,0,0,3,0,0,7,0,5 },
                     new int[]{6,4,9,0,5,0,0,0,2 }
             };
-            PrintBoard(puzzle4);
+            PrintBoard(puzzle3);
             Console.WriteLine("Now Solve it:");
-            csSudokuSolver3(puzzle4);
-            PrintBoard(puzzle4);
+            csSudokuSolver3(puzzle3);
+            PrintBoard(puzzle3);
             
         }
 
         public static void PrintBoard(int[][] board)
         {
+            /*
             foreach (var collection in board)
             {
                 foreach (var item in collection)
@@ -110,6 +111,24 @@ namespace csSudokuSolver
                     Console.Write(item);
                 }
                 Console.WriteLine();
+            }
+            */
+            for(int row = 0; row < board.Length; row++)
+            {
+                for(int col = 0; col < board[row].Length; col++)
+                {
+                    Console.Write(board[row][col]);
+                    if (col % 3 == 2) Console.Write("|");
+                }
+                Console.WriteLine();
+                if(row%3==2)
+                {
+                    for (int col = 0; col < board[row].Length+2; col++)
+                    {
+                        Console.Write("-");
+                    }
+                    Console.WriteLine("|") ;
+                }
             }
         }
        
